@@ -37,7 +37,10 @@ jobs:
       - run: docker push 708485767572.dkr.ecr.us-east-1.amazonaws.com/shopstream/${{ matrix.service }}:${{ github.sha }}
 
       - uses: actions/checkout@v4
-        with: { repository: BhushDevOps/shopstream-gitops, token: ${{ secrets.GITOPS_PAT }}, path: gitops }
+        with:
+          repository: BhushDevOps/shopstream-gitops
+          token: ${{ secrets.GITOPS_PAT }}
+          path: gitops
 
       - run: |
           cd gitops
