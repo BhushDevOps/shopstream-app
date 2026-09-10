@@ -1,0 +1,52 @@
+name: build-and-release
+on:
+  push:
+    branches: [main]
+
+permissions:
+  id-token: write     # required for OIDC
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: { service: [storefront, catalog-api, orders-api, worker] }
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::708485767572:role/gha-shopstream-ecr-push
+          aws-region: us-east-1
+
+      - run: |
+          aws ecr get-login-password | docker login --username AWS --password-stdin 708485767572.dkr.ecr.us-east-1.amazonaws.com
+
+      - run: docker build -t 708485767572.dkr.ecr.us-east-1.amazonaws.com/shopstream/${{ matrix.service }}:${{ github.sha }} ${{ matrix.service }}
+
+      # placeholder for real tests - skeleton services expose /healthz, wire pytest here if you added tests
+      - run: docker run --rm 708485767572.dkr.ecr.us-east-1.amazonaws.com/shopstream/${{ matrix.service }}:${{ github.sha }} python -c "print('smoke ok')"
+
+      - uses: aquasecurity/trivy-action@0.24.0
+        with:
+          image-ref: 708485767572.dkr.ecr.us-east-1.amazonaws.com/shopstream/${{ matrix.service }}:${{ github.sha }}
+          severity: CRITICAL,HIGH
+          exit-code: "1"          # this is the gate - non-zero exit fails the job
+
+      - run: docker push 708485767572.dkr.ecr.us-east-1.amazonaws.com/shopstream/${{ matrix.service }}:${{ github.sha }}
+
+      - uses: actions/checkout@v4
+        with: { repository: BhushDevOps/shopstream-gitops, token: ${{ secrets.GITOPS_PAT }}, path: gitops }
+
+      - run: |
+          cd gitops
+          sed -i "s|tag: .*|tag: ${{ github.sha }}|" apps/${{ matrix.service }}-values.yaml
+
+      - uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITOPS_PAT }}
+          path: gitops
+          commit-message: "bump ${{ matrix.service }} to ${{ github.sha }}"
+          title: "deploy: ${{ matrix.service }} @ ${{ github.sha }}"
+          branch: "bump-${{ matrix.service }}-${{ github.sha }}"
