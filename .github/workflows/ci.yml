@@ -32,6 +32,7 @@ jobs:
         with:
           image-ref: 708485767572.dkr.ecr.us-east-1.amazonaws.com/shopstream/${{ matrix.service }}:${{ github.sha }}
           severity: CRITICAL,HIGH
+          ignore-unfixed: true    # don't fail on CVEs with no available patch - nothing a rebuild can fix
           exit-code: "1"          # this is the gate - non-zero exit fails the job
 
       - run: docker push 708485767572.dkr.ecr.us-east-1.amazonaws.com/shopstream/${{ matrix.service }}:${{ github.sha }}
