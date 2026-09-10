@@ -1,7 +1,8 @@
 """ShopStream storefront — public web UI.
 
 Calls catalog-api over the cluster network (plain Service DNS name)
-and renders the product list as HTML.
+and renders the product list as HTML. 
+
 """
 import os
 import httpx
