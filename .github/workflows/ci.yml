@@ -28,7 +28,7 @@ jobs:
       # placeholder for real tests - skeleton services expose /healthz, wire pytest here if you added tests
       - run: docker run --rm 708485767572.dkr.ecr.us-east-1.amazonaws.com/shopstream/${{ matrix.service }}:${{ github.sha }} python -c "print('smoke ok')"
 
-      - uses: aquasecurity/trivy-action@0.24.0
+      - uses: aquasecurity/trivy-action@v0.24.0
         with:
           image-ref: 708485767572.dkr.ecr.us-east-1.amazonaws.com/shopstream/${{ matrix.service }}:${{ github.sha }}
           severity: CRITICAL,HIGH
