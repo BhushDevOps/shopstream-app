@@ -38,7 +38,8 @@ async def home(request: Request):
     except Exception as exc:  # show the failure instead of a stack trace
         error = f"catalog-api unreachable: {exc}"
     return templates.TemplateResponse(
-        "index.html",
-        {"request": request, "products": products, "error": error,
-         "pod": os.environ.get("HOSTNAME", "unknown")},
+        request=request,
+        name="index.html",
+        context={"products": products, "error": error,
+                 "pod": os.environ.get("HOSTNAME", "unknown")},
     )
