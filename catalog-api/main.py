@@ -3,7 +3,7 @@
 Day 7's in-memory list is gone. Connection details arrive as environment
 variables: host/port/name from a ConfigMap, username/password from a
 Kubernetes Secret that External Secrets Operator syncs from AWS Secrets
-Manager. This code never knows where the password came from.
+Manager. This code never knows where the password came from. 
 """
 import os
 from contextlib import asynccontextmanager
