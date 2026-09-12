@@ -21,10 +21,10 @@ DB = dict(
 CONNINFO = "host={host} port={port} dbname={dbname} user={user} password={password}".format(**DB)
 
 SEED = [
-    ("Mechanical keyboard", 89.00),
-    ("USB-C dock", 129.50),
-    ("27-inch monitor", 249.99),
-    ("Webcam", 59.00),
+    ("Mechanical keyboard", 99.00),
+    ("USB-C dock", 999.50),
+    ("27-inch monitor", 999.99),
+    ("Webcam", 99.00),
 ]
 
 
