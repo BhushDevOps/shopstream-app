@@ -10,6 +10,7 @@ from contextlib import asynccontextmanager
 
 import psycopg
 from fastapi import FastAPI, HTTPException
+from psycopg_pool import ConnectionPool
 
 DB = dict(
     host=os.environ["DB_HOST"],
@@ -41,10 +42,15 @@ def init_db():
         conn.commit()
 
 
+pool = ConnectionPool(CONNINFO, min_size=2, max_size=10, open=False)
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    pool.open()
     init_db()
     yield
+    pool.close()
 
 
 app = FastAPI(title="catalog-api", lifespan=lifespan)
@@ -70,7 +76,7 @@ def readyz():
 
 @app.get("/products")
 def list_products():
-    with psycopg.connect(CONNINFO, connect_timeout=3) as conn, conn.cursor() as cur:
+    with pool.connection() as conn, conn.cursor() as cur:
         cur.execute("SELECT id, name, price FROM products ORDER BY id")
         rows = cur.fetchall()
     return {
