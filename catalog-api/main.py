@@ -7,6 +7,8 @@ Manager. This code never knows where the password came from.
 """
 import os
 from contextlib import asynccontextmanager
+from prometheus_client import Counter, Histogram, make_asgi_app
+
 
 import psycopg
 from fastapi import FastAPI, HTTPException
@@ -83,3 +85,15 @@ def list_products():
         "products": [{"id": r[0], "name": r[1], "price": float(r[2])} for r in rows],
         "served_by": os.environ.get("HOSTNAME", "unknown"),
     }
+
+REQUESTS = Counter("http_requests_total", "Total requests", ["method", "path", "status"])
+LATENCY = Histogram("http_request_duration_seconds", "Request duration", ["path"])
+
+app.mount("/metrics", make_asgi_app())
+
+@app.middleware("http")
+async def track_metrics(request, call_next):
+    with LATENCY.labels(path=request.url.path).time():
+        response = await call_next(request)
+    REQUESTS.labels(method=request.method, path=request.url.path, status=response.status_code).inc()
+    return response
