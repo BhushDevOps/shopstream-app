@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block body %}
+  <h2>Log in</h2>
+  {% if error %}<p class="err">{{ error }}</p>{% endif %}
+  <form method="post" action="/login">
+    <p><input name="username" placeholder="username" required></p>
+    <p><input name="password" type="password" placeholder="password" required></p>
+    <button>Log in</button>
+  </form>
+  <p class="pod">demo users: alice / alice123, bob / bob123</p>
+{% endblock %}

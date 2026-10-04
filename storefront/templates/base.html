@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head><title>ShopStream</title>
+<style>
+  body { font-family: sans-serif; max-width: 680px; margin: 40px auto; }
+  nav { display: flex; gap: 16px; align-items: center; border-bottom: 1px solid #ddd; padding-bottom: 8px; }
+  nav .who { margin-left: auto; color: #555; }
+  table { border-collapse: collapse; width: 100%; } td, th { padding: 6px; border-bottom: 1px solid #eee; text-align: left; }
+  .err { color: #a00; } .msg { color: #a60; } .pod { color: #888; font-size: 12px; margin-top: 24px; }
+  input[type=number] { width: 50px; }
+</style>
+</head>
+<body>
+  <nav>
+    <b>ShopStream</b>
+    {% if user %}<a href="/">Shop</a><a href="/my-orders">My orders</a>
+    <span class="who">{{ user }} · <a href="/logout">Log out</a></span>{% endif %}
+  </nav>
+  {% block body %}{% endblock %}
+  <p class="pod">served by pod: {{ pod }}</p>
+</body>
+</html>

@@ -1,20 +1,18 @@
-<!DOCTYPE html>
-<html>
-<head><title>ShopStream</title>
-<style>
-  body { font-family: sans-serif; max-width: 640px; margin: 40px auto; }
-  li { margin: 6px 0; }
-  .err { color: #a00; } .pod { color: #888; font-size: 12px; }
-</style>
-</head>
-<body>
-  <h1>ShopStream</h1>
+{% extends "base.html" %}
+{% block body %}
+  <h2>Products</h2>
   {% if error %}<p class="err">{{ error }}</p>{% endif %}
-  <ul>
+  {% if message %}<p class="msg">{{ message }}</p>{% endif %}
+  <table>
   {% for p in products %}
-    <li>{{ p.name }} — ${{ p.price }}</li>
+    <tr>
+      <td>{{ p.name }}</td><td>${{ p.price }}</td>
+      <td><form method="post" action="/order" style="margin:0">
+        <input type="hidden" name="product_id" value="{{ p.id }}">
+        <input type="number" name="quantity" value="1" min="1" max="10">
+        <button>Order</button>
+      </form></td>
+    </tr>
   {% endfor %}
-  </ul>
-  <p class="pod">served by pod: {{ pod }}</p>
-</body>
-</html>
+  </table>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block body %}
+  <h2>My orders</h2>
+  {% if error %}<p class="err">{{ error }}</p>{% endif %}
+  {% if not orders and not error %}<p>No orders yet. <a href="/">Go shopping</a>.</p>{% endif %}
+  {% if orders %}
+  <table>
+    <tr><th>#</th><th>Product</th><th>Qty</th><th>Status</th></tr>
+    {% for o in orders %}
+    <tr><td>{{ o.id }}</td><td>{{ o.product }}</td><td>{{ o.quantity }}</td><td>{{ o.status }}</td></tr>
+    {% endfor %}
+  </table>
+  <p class="pod">Status changes new → processed when the worker finishes (refresh the page).</p>
+  {% endif %}
+{% endblock %}
